@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Описания для 20 фото</title>
+<style>
+body{margin:0;font-family:"Segoe UI",system-ui,Arial,sans-serif;background:#0f1519;color:#e8eef2}
+.wrap{max-width:900px;margin:0 auto;padding:16px}
+h1{font-size:24px}
+.note{background:#1a2329;border:2px solid #2b373e;border-radius:14px;padding:12px 14px;line-height:1.5}
+.item{background:#1a2329;border:2px solid #2b373e;border-radius:14px;padding:14px;margin:14px 0}
+.item h2{margin:0 0 8px;font-size:18px;color:#1cb0f6}
+.item code{background:#0f1519;border-radius:6px;padding:2px 6px;color:#ffc800}
+.item textarea{width:100%;min-height:170px;box-sizing:border-box;background:#0f1519;color:#e8eef2;border:2px solid #2b373e;border-radius:10px;padding:10px;font:14px/1.5 inherit;resize:vertical}
+button{border:0;border-radius:12px;padding:10px 18px;font-weight:800;color:#06222f;background:#1cb0f6;cursor:pointer;margin-top:8px}
+.ok{color:#3ecf6b;font-weight:700;margin-left:10px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Описания для 20 фото</h1>
+  <div class="note">
+    Для каждого раздела есть два описания: на русском и на английском (всего 20). Нажмите «Копировать» и вставьте описание в свой генератор картинок.
+    Готовую картинку сохраните в папку <code>images</code> под указанным именем, например <code>s2-ru.webp</code>.
+    Сайт сам покажет ваше фото вместо нарисованного плаката.<br><br>
+    Генераторы картинок часто искажают казахские буквы (ә, ғ, қ, ң, ө, ұ, ү, һ, і). Проверьте каждое слово на готовой картинке.
+    Лучший размер: горизонтальный 3:2, как у вашего образца.
+  </div>
+  <div id="list"></div>
+</div>
+<script src="data.js"></script>
+<script src="lessons2.js"></script>
+<script src="i18n.js"></script>
+<script src="i18n2.js"></script>
+<script src="words.js"></script>
+<script>
+(function () {
+  var PL = ['Алматы', 'Астана', 'Шымкент', 'Бурабай', 'Чарын', 'Туркестан', 'Кольсай', 'Бозжыра', 'Актау', 'Алтай'];
+  var PLEN = ['Almaty', 'Astana', 'Shymkent', 'Burabay', 'Charyn', 'Turkistan', 'Kolsai', 'Bozzhyra', 'Aktau', 'Altai'];
+  var SIGHTS = [
+    ['башня Көк-Төбе, горы Заилийский Алатау со снегом, канатная дорога, каток Медеу, горнолыжный курорт Шымбулак, красные яблоки', 'Kök-Töbe TV tower, snowy Zailiysky Alatau mountains, cable car, Medeu ice rink, Shymbulak ski resort, red apples'],
+    ['башня Байтерек, торговый центр Хан Шатыр, шар Нұр Алем, река Есиль, современные небоскрёбы', 'Baiterek tower, Khan Shatyr tent-shaped centre, the Nur Alem sphere, the Ishim river, modern skyscrapers'],
+    ['площадь Ордабасы, дендропарк, южный базар с фруктами, яркое южное солнце', 'Ordabasy square, the dendrological park, a southern bazaar with fruit, bright southern sun'],
+    ['озеро Бурабай, скалы Жумбактас и Окжетпес, сосновый лес, национальный парк', 'Lake Burabay, the Zhumbaktas and Okzhetpes rocks, pine forest, national park'],
+    ['Чарынский каньон, красные скалы «Долина замков», река Чарын, ясеневая роща', 'Charyn Canyon, the red rocks of the Valley of Castles, the Charyn river, an ash grove'],
+    ['мавзолей Ходжи Ахмеда Ясави с голубыми куполами, старый город Туркестан, современный поезд', 'Mausoleum of Khoja Ahmed Yasawi with blue domes, old Turkistan, a modern train'],
+    ['озёра Кольсай с бирюзовой водой, горы Тянь-Шаня, ели, всадники на лошадях', 'the turquoise Kolsai lakes, Tian Shan mountains, spruce trees, riders on horses'],
+    ['урочище Бозжыра: белые скалы-«клыки», пустынные цвета Мангистау, закат', 'the Bozzhyra gorge: white fang-like rocks, the desert colours of Mangystau, sunset'],
+    ['побережье Каспийского моря, меловые скалы, набережная Актау, парусник на закате', 'the Caspian Sea coast, chalk cliffs, the Aktau embankment, a sailboat at sunset'],
+    ['двуглавая гора Белуха со снегом, горные реки Алтая, кедровый лес, озеро Маркаколь', 'the twin-peaked snowy Belukha mountain, Altai mountain rivers, cedar forest, Lake Markakol']
+  ];
+  function tr(s, en) { return en ? (window.I18N.en[s] || s) : s; }
+  function cards(u, en) {
+    return u.ids.map(function (id) {
+      var l = window.LESSONS.filter(function (x) { return x.id === id; })[0];
+      var rows = window.LESSON_WORDS[id].map(function (p) { return p[0] + ' — ' + tr(p[1], en); }).join('; ');
+      return '«' + tr(l.title, en) + '»: ' + rows;
+    }).join('\n');
+  }
+  function build(ui, en) {
+    var u = window.UNITS[ui], place = en ? PLEN[ui] : PL[ui], sub = tr(u.desc, en);
+    if (en) {
+      return 'Horizontal 3:2 educational poster for learning the Kazakh language, in the same style as the Unit 1 sample. Title banner in an ornate dark-red frame with gold Kazakh ornament: "Unit ' + (ui + 1) + '. ' + place + '", subtitle "' + sub + '". Background: photorealistic ' + SIGHTS[ui][1] + '. A cheerful young man and woman in modern-style Kazakh national costume, one dombra, a decorative border with Kazakh ornament. On the right and bottom, cream-coloured rounded cards with gold ornament frames, each with a dark-blue title and a two-column table (Kazakh word in bold dark red | English translation). Cards and exact words (do not change the spelling):\n' + cards(u, true) + '\n\nAll text must be sharp, correctly spelled and easy to read.';
+    }
+    return 'Горизонтальный образовательный плакат 3:2 для изучения казахского языка, в том же стиле, что образец раздела 1. Заголовок в красной рамке с золотым казахским орнаментом: «Раздел ' + (ui + 1) + '. ' + place + '», подзаголовок «' + sub + '». Фон: фотореалистично ' + SIGHTS[ui][0] + '. Улыбающиеся молодой человек и девушка в национальных казахских костюмах, домбра, рамка с орнаментом. Справа и внизу карточки кремового цвета с золотой орнаментальной рамкой, у каждой тёмно-синий заголовок и таблица из двух столбцов (казахское слово тёмно-красным жирным | перевод на русский). Карточки и точные слова (не меняйте написание):\n' + cards(u, false) + '\n\nВесь текст должен быть чётким, без ошибок и легко читаемым.';
+  }
+  var list = document.getElementById('list');
+  window.UNITS.forEach(function (u, ui) {
+    [['ru', false], ['en', true]].forEach(function (pair) {
+      var lang = pair[0], en = pair[1];
+      var box = document.createElement('div');
+      box.className = 'item';
+      var h = document.createElement('h2');
+      h.innerHTML = (en ? 'Unit ' : 'Раздел ') + (ui + 1) + ', ' + (en ? PLEN[ui] : PL[ui]) + ' — файл <code>images/s' + (ui + 1) + '-' + lang + '.webp</code>';
+      var ta = document.createElement('textarea');
+      ta.readOnly = true;
+      ta.value = build(ui, en);
+      var b = document.createElement('button');
+      b.textContent = 'Копировать';
+      var ok = document.createElement('span');
+      ok.className = 'ok';
+      b.onclick = function () {
+        function done() { ok.textContent = 'Скопировано'; setTimeout(function () { ok.textContent = ''; }, 1500); }
+        ta.select();
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(ta.value).then(done, function () { document.execCommand('copy'); done(); });
+        } else { document.execCommand('copy'); done(); }
+      };
+      box.appendChild(h); box.appendChild(ta); box.appendChild(b); box.appendChild(ok);
+      list.appendChild(box);
+    });
+  });
+})();
+</script>
+</body>
+</html>
